@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data cliass=".ActivityMainBinding"> </data>
+<LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.henryxzw.videodemo.MainActivity"
+    android:orientation="vertical"
+    android:gravity="center">
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开启服务"></Button>
+
+    <TextView
+        android:id="@+id/tv_service_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+         <Button
+        android:id="@+id/btn_choose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择视频"></Button>
+    <TextView
+        android:id="@+id/tv_video_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""/>
+
+    <ImageView
+        android:id="@+id/iv_preview"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="fitCenter"/>
+      </LinearLayout>
+</layout>
