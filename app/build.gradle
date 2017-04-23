@@ -1,3 +1,5 @@
+import javax.xml.transform.Source
+
 apply plugin: 'com.android.application'
 
 android {
@@ -10,6 +12,13 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {// 设置支持的SO库架构
+            abiFilters  "x86", "armeabi-v7a","armeabi-v8a"
+        }
+        sourceSets.main {
+            jniLibs.srcDir 'src/main/jniLibs'
+            jni.srcDirs = []//不编译jni
+        }
     }
     buildTypes {
         release {
@@ -30,4 +39,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
     testCompile 'junit:junit:4.12'
+
+    compile project(':ffmpeg4android_lib')
 }

@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -51,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> files,imgs;
 
     private  String fileTemp="";
+    private VideoInfo videoInfo;
 
     private final String parentPath = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"tencent"+File.separator+"MicroMsg"+File.separator;
 
     private  String x = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"u.mp4";
 
-    private Bitmap bitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
                     != PackageManager.PERMISSION_GRANTED) {
                 permission.add(Manifest.permission.READ_EXTERNAL_STORAGE);
 
+            }
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED)
+            {
+                permission.add(Manifest.permission.READ_EXTERNAL_STORAGE);
             }
             if (permission.size() > 0) {
                 String[] strings = new String[permission.size()];
@@ -146,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                                         try
                                         {
                                             FileOutputStream fo = new FileOutputStream(new File(fileTemp+File.separator+imgsList.get(i)));
-                                            bitmap.compress(Bitmap.CompressFormat.JPEG,100,fo);
+                                            videoInfo.getPreview().compress(Bitmap.CompressFormat.JPEG,100,fo);
 //                                            bitmap.recycle();
                                             fo.close();
                                             imgs.clear();
@@ -189,6 +195,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        binding.btnControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,ControlActivity.class);
+                intent.putExtra("path",videoInfo.getPath());
+                startActivityForResult(intent,102);
+            }
+        });
     }
 
     /**
@@ -228,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
     {
         files = new ArrayList<>();
         imgs = new ArrayList<>();
+        videoInfo = new VideoInfo();
 
         tv_file_msg.setText("默认分享路径："+x);
 
@@ -300,6 +315,33 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, 1);
     }
 
+    public void InitVideoDataInfo()
+    {
+        File file = new File(x);
+        float videoSize = file.length()*1.0f/1024/1024;
+
+        tv_file_msg.setText(String.format(Locale.CHINA,"路径：%s \r\n大小：%.1fMB",x,videoSize));
+        Bitmap bitmap = getVideoThumbnail(x);
+        binding.ivPreview.setImageBitmap(bitmap);
+
+        videoInfo.setName(file.getName());
+        videoInfo.setPath(x);
+        videoInfo.setSize(videoSize);
+        videoInfo.setPreview(bitmap);
+
+        if(videoSize>2)
+        {
+            binding.tvStatus.setText("视频文件超过2M，发送朋友圈可能失败");
+            binding.btnControl.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            binding.tvStatus.setText("");
+            binding.btnControl.setVisibility(View.GONE);
+        }
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // 选取图片的返回值
@@ -308,13 +350,10 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Uri uri = data.getData();
 
+                videoInfo.setUri(uri);
                 String v_path = getPathByUri4kitkat(this,uri);
-                tv_file_msg.setText("路径："+v_path);
                 x = v_path;
-                Bitmap bitmap = getVideoThumbnail(x);
-                binding.ivPreview.setImageBitmap(bitmap);
-                this.bitmap = bitmap;
-
+                InitVideoDataInfo();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
