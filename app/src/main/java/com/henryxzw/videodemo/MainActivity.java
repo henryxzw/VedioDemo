@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         btnChoose = binding.btnChoose;
         tv_service_msg = binding.tvServiceMsg;
         tv_file_msg = binding.tvVideoMsg;
+
+        binding.topBar.title.setText("ceshi");
     }
 
     private void InitListener()

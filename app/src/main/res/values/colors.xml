@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--字体颜色-->
+    <color name="color_text_red">#e60012</color>
+    <color name="color_text_dark">#424242</color>
+    <color name="color_text_gravy">#a0a0a0</color>
+    <color name="color_text_sliver">#cfcfcf</color>
+    <color name="color_text_light_gravy">#FFBCBCBC</color>
+    <color name="color_text_org">#ff9000</color>
+
+
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryDark">#FFBCBCBC</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="application_base_color">#464646</color>
 </resources>
