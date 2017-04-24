@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">VideoDemo</string>
+
+    <string name="static_msg_name_1">微大圣视频制作</string>
+    <string name="static_msg_name_phone_hide">手机号码</string>
+    <string name="static_msg_name_password_hide">账号密码</string>
+    <string name="static_msg_name_input_password_hide">请输入新密码（6-15位数字或英文）</string>
+    <string name="static_msg_name_input_new_password_hide">请再输入新密码（6-15位数字或英文）</string>
+    <string name="static_msg_name_input_phone_hide">请输入手机号</string>
+    <string name="static_msg_name_input_code_hide">请输入验证码</string>
 </resources>

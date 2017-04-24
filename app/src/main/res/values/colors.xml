@@ -11,8 +11,8 @@
 
 
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#FFBCBCBC</color>
+    <color name="colorPrimaryDark">#e8672e</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="application_base_color">#464646</color>
+    <color name="application_base_color">#e8672e</color>
 </resources>
