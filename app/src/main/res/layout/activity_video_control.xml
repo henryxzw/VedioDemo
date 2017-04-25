@@ -10,12 +10,38 @@
         <include
             android:id="@+id/include_title"
             layout="@layout/title_bar"></include>
-
-        <SurfaceView
-            android:id="@+id/surfaceView"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1">
+            <SurfaceView
+                android:id="@+id/surfaceView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/linear_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="现在还没有选择视频文件"
+                    android:textColor="@android:color/white"/>
+                <TextView
+                    android:id="@+id/tv_choose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="点击选择"
+                    android:textColor="@android:color/holo_blue_light"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,11 +73,13 @@
                             android:text="压缩后："
                             android:textColor="@android:color/white"/>
                         <TextView
+                            android:id="@+id/tv_video_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0.93MB"
                             android:textColor="@android:color/holo_red_light"/>
                         <TextView
+                            android:id="@+id/tv_video_origin_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
