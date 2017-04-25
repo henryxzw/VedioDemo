@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class=".ActivityVedioControlBinding"></data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include
+            android:id="@+id/include_title"
+            layout="@layout/title_bar"></include>
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <ViewSwitcher
+                android:id="@+id/viewSwitcher"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black"
+                android:layout_weight="1"
+                android:inAnimation="@android:anim/slide_in_left"
+                android:outAnimation="@android:anim/slide_out_right"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="压缩后："
+                            android:textColor="@android:color/white"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.93MB"
+                            android:textColor="@android:color/holo_red_light"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="(原始文件：0.93MB)"
+                            android:textColor="@color/color_text_light_gravy"/>
+                    </LinearLayout>
+                    <Button
+                        android:id="@+id/btn_self"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/btn_base_bg_view"
+
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center_horizontal"
+                        android:text="自定义压缩"/>
+                    <Button
+                        android:id="@+id/btn_auto"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/btn_base_bg_view"
+
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center_horizontal"
+                        android:text="自动压缩"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/static_msg_name_2"
+                        android:padding="10dp"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/color_text_light_gravy"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"></LinearLayout>
+                    <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:background="@android:color/white">
+                    <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="保存视频到相册"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:drawablePadding="5dp"
+
+                    />
+                    </LinearLayout>
+
+                    <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="转朋友圈小视频"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:drawableLeft="@mipmap/icon_wechat_video"
+                    android:drawablePadding="5dp"/>
+                    </LinearLayout>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    >
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
+                      android:layout_weight="1">
+                      <TextView
+                          android:id="@+id/tv_back"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:text="返回"
+                          android:textColor="@android:color/white"
+                          android:gravity="right"
+                          android:layout_marginRight="10dp"
+                          android:padding="10dp"/>
+
+                      <LinearLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:paddingLeft="20dp"
+                          android:paddingRight="20dp"
+                          android:layout_weight="1"
+                          android:gravity="center_vertical"
+                          >
+                          <TextView
+                              android:layout_width="70dp"
+                              android:layout_height="wrap_content"
+                              android:text="原始尺寸"
+                              android:gravity="left"
+                              android:textColor="@color/color_text_light_gravy"/>
+                          <SeekBar
+                              android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:progressDrawable="@drawable/seekbar_view"
+                              android:thumb="@drawable/seekbar_circle_view"
+                              android:max="100"
+                              android:maxHeight="2dp"
+                              android:layout_weight="1"/>
+                          <TextView
+                              android:layout_width="80dp"
+                              android:layout_height="wrap_content"
+                              android:text="原始尺寸"
+                              android:gravity="right"
+                              android:textColor="@color/color_text_light_gravy"/>
+                      </LinearLayout>
+
+                      <LinearLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:paddingLeft="20dp"
+                          android:paddingRight="20dp"
+                          android:layout_weight="1"
+                          android:gravity="center_vertical"
+                          >
+                          <TextView
+                              android:layout_width="70dp"
+                              android:layout_height="wrap_content"
+                              android:text="视频码率"
+                              android:gravity="left"
+                              android:textColor="@color/color_text_light_gravy"/>
+                          <SeekBar
+                              android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:progressDrawable="@drawable/seekbar_view"
+                              android:thumb="@drawable/seekbar_circle_view"
+                              android:max="100"
+                              android:maxHeight="2dp"/>
+                          <TextView
+                              android:id="@+id/tv_video_param_2"
+                              android:layout_width="80dp"
+                              android:layout_height="wrap_content"
+
+                              android:text="112"
+                              android:gravity="right"
+                              android:textColor="@color/color_text_light_gravy"/>
+                      </LinearLayout>
+
+                      <LinearLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:paddingLeft="20dp"
+                          android:paddingRight="20dp"
+                          android:layout_weight="1"
+                          android:gravity="center_vertical"
+                          >
+                          <TextView
+                              android:layout_width="70dp"
+                              android:layout_height="wrap_content"
+                              android:text="帧率"
+                              android:gravity="left"
+                              android:textColor="@color/color_text_light_gravy"/>
+                          <SeekBar
+                              android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:progressDrawable="@drawable/seekbar_view"
+                              android:thumb="@drawable/seekbar_circle_view"
+                              android:max="100"
+                              android:maxHeight="2dp"/>
+                          <TextView
+                              android:layout_width="80dp"
+                              android:layout_height="wrap_content"
+                              android:text="14"
+                              android:gravity="right"
+                              android:textColor="@color/color_text_light_gravy"/>
+                      </LinearLayout>
+
+                      <LinearLayout
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:paddingLeft="20dp"
+                          android:paddingRight="20dp"
+                          android:layout_weight="1"
+                          android:gravity="center_vertical"
+                          >
+                          <TextView
+                              android:layout_width="70dp"
+                              android:layout_height="wrap_content"
+                              android:text="音频码率"
+                              android:gravity="left"
+                              android:textColor="@color/color_text_light_gravy"/>
+                          <SeekBar
+                              android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:progressDrawable="@drawable/seekbar_view"
+                              android:thumb="@drawable/seekbar_circle_view"
+                              android:max="100"
+                              android:maxHeight="2dp"/>
+                          <TextView
+                              android:layout_width="80dp"
+                              android:layout_height="wrap_content"
+                              android:text="37"
+                              android:gravity="right"
+                              android:textColor="@color/color_text_light_gravy"/>
+                      </LinearLayout>
+                  </LinearLayout>
+
+
+                    <Button
+                    android:id="@+id/btn_do"
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/btn_base_bg_view"
+
+                        android:layout_marginBottom="10dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="压缩"/>
+
+
+                </LinearLayout>
+
+            </ViewSwitcher>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+    </FrameLayout>
+</layout>

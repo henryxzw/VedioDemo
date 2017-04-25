@@ -2,6 +2,7 @@
     <string name="app_name">VideoDemo</string>
 
     <string name="static_msg_name_1">微大圣视频制作</string>
+    <string name="static_msg_name_2">自动压缩则是将文件压缩至少于1MB</string>
     <string name="static_msg_name_phone_hide">手机号码</string>
     <string name="static_msg_name_password_hide">账号密码</string>
     <string name="static_msg_name_input_password_hide">请输入新密码（6-15位数字或英文）</string>

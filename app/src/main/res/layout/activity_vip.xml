@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class=".ActivityVipBinding"></data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/application_base_bg_color">
+        <LinearLayout
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <include
+                android:id="@+id/include_title"
+                layout="@layout/title_bar"></include>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:orientation="horizontal">
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="VIP会员"
+                   android:drawableLeft="@mipmap/icon_vip"
+                   android:drawablePadding="10dp"
+                   android:textSize="16sp"
+                   android:textColor="@color/color_text_dark"
+                   android:padding="10dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="198元/年"
+                    android:textSize="16sp"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/holo_red_light"/>
+                <Button
+                    android:id="@+id/btn_vip_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="开通"
+                    android:layout_marginRight="10dp"
+
+                    android:background="@drawable/btn_base_bg_view"
+                    android:textColor="#ffffff"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VIP会员"
+                    android:drawableLeft="@mipmap/icon_vip"
+                    android:drawablePadding="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/color_text_dark"
+                    android:padding="10dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="30元/年"
+                    android:textSize="16sp"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/holo_red_light"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="开通"
+                    android:layout_marginRight="10dp"
+
+                    android:background="@drawable/btn_base_bg_view"
+                    android:textColor="#ffffff"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+</layout>

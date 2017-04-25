@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class=".ActivityHomeBinding"></data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/application_base_bg_color">
+        <LinearLayout
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <include
+                android:id="@+id/include_title"
+                layout="@layout/title_bar"></include>
+            <Button
+                android:id="@+id/btn_water_mark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@mipmap/icon_logo"
+                android:drawablePadding="20dp"
+                android:background="#ffffff"
+                android:text="视频加水印"
+                android:textColor="@color/color_text_gravy"
+                android:textSize="17sp"
+                android:paddingLeft="20dp"
+                android:gravity="left|center_vertical"
+                android:drawableRight="@mipmap/arrow_right_small"
+                android:paddingRight="20dp"
+                android:layout_marginTop="5dp"/>
+
+            <Button
+                android:id="@+id/btn_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@mipmap/icon_wechat_video"
+                android:drawablePadding="20dp"
+                android:background="#ffffff"
+                android:text="朋友圈长视频"
+                android:textColor="@color/color_text_gravy"
+                android:textSize="17sp"
+                android:paddingLeft="20dp"
+                android:gravity="left|center_vertical"
+                android:drawableRight="@mipmap/arrow_right_small"
+                android:paddingRight="20dp"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+
+    </FrameLayout>
+
+</layout>

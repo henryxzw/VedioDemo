@@ -1,6 +1,6 @@
 [
     {
-        "outputFile": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+        "outputFile": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values/values.xml",
         "map": [
             {
                 "to": {
@@ -11,7 +11,7 @@
                     "endOffset": 92
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 2,
                         "startColumn": 4,
@@ -30,7 +30,7 @@
                     "endOffset": 234
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 3,
                         "startColumn": 4,
@@ -49,7 +49,7 @@
                     "endOffset": 290
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,
@@ -68,7 +68,7 @@
                     "endOffset": 352
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 5,
                         "startColumn": 4,
@@ -88,7 +88,7 @@
                     "endOffset": 540
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 6,
                         "startColumn": 4,
@@ -108,7 +108,7 @@
                     "endOffset": 675
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 8,
                         "startColumn": 4,
@@ -128,7 +128,7 @@
                     "endOffset": 924
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 9,
                         "startColumn": 4,
@@ -148,7 +148,7 @@
                     "endOffset": 1052
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 12,
                         "startColumn": 4,
@@ -168,7 +168,7 @@
                     "endOffset": 1252
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 13,
                         "startColumn": 4,
@@ -189,7 +189,7 @@
                     "endOffset": 1452
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 18,
                         "startColumn": 4,
@@ -210,7 +210,7 @@
                     "endOffset": 1600
                 },
                 "from": {
-                    "file": "D:\\AndroidProject\\VideoDemo\\ffmpeg4android_lib\\build\\intermediates\\bundles\\debug\\res\\values\\values.xml",
+                    "file": "/Users/apple/AndroidStudioProjects/VideoDemo/ffmpeg4android_lib/build/intermediates/bundles/debug/res/values/values.xml",
                     "position": {
                         "startLine": 23,
                         "startColumn": 4,

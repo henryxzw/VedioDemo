@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.henryxzw.videodemo.ActivityRegisterBinding;
 import com.henryxzw.videodemo.R;
@@ -20,6 +21,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_register);
         binding.includeTitle.title.setText("在线注册");
+        binding.includeTitle.toolBar.setNavigationIcon(R.mipmap.arrow_left);
 
         InitListener();
 
@@ -27,6 +29,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void InitListener()
     {
-
+        binding.includeTitle.toolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 }
