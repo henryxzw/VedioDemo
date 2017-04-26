@@ -23,7 +23,7 @@ import videocompress.util.VideoUtil;
 public class VideoCompressor {
     private Context mContext;
 //    private static String mStrCmd = " -strict -2 -vcodec libx264 -preset ultrafast -acodec aac -ar 44100 -ac 1 -b:a 32k -s 480x240 -aspect 2:1 -r 24 ";
-    private static String mStrCmd = " -strict -2 -vcodec libx264 -fs 990000 ";
+    private static String mStrCmd = " -strict -2 -vcodec libx264 -fs 900000 ";
     private static String mStrCmdPre = "ffmpeg -y -i ";
     private static String mOutputFile = AppUtil.getAppDir() + "/video_compress.mp4";
 
@@ -96,6 +96,44 @@ public class VideoCompressor {
             }
         }.start();
     }
+
+    public static void InfoByFFmped(Context context, String inputFile,VideoCompressListener listener)
+    {
+        init(context);
+        SGLog.e("runTranscodingUsingLoader started...");
+        vk = new LoadJNI();
+        String newFilename = null;
+        try {
+            newFilename = VideoUtil.getFileMD5(new File(inputFile)) + ".mp4";
+
+            String cmdStr = "ffmpeg -i "+inputFile+"";
+            vk.run(GeneralUtils.utilConvertToComplex(cmdStr), workFolder, context.getApplicationContext());
+
+            Log.i(Prefs.TAG, "vk.run finished.");
+        } catch (CommandValidationException e) {
+            SGLog.e("vk run exeption."+ e);
+            commandValidationFailedFlag = true;
+        } catch (Throwable e) {
+            SGLog.e("vk run exeption."+e);
+        }
+        // finished Toast
+        String rc = null;
+        if (commandValidationFailedFlag) {
+            rc = "Command Vaidation Failed";
+        }
+        else {
+            rc = GeneralUtils.getReturnCodeFromLog(vkLogPath);
+        }
+        final String status = rc;
+        SGLog.e("compress rc="+rc);
+        if (status.equals("Transcoding Status: Failed")) {
+            String strFailInfo = "Check: " + vkLogPath + " for more information.";
+            listener.onFail(strFailInfo);
+        }else{
+            listener.onSuccess(mOutputFile,newFilename, getVideoDuration(inputFile));
+        }
+    }
+
     private static void compressByFFmpeg(Context context,String inputFile,final VideoCompressListener listener) {
         SGLog.e("runTranscodingUsingLoader started...");
         vk = new LoadJNI();
