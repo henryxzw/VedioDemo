@@ -34,6 +34,7 @@ public class ControlActivity extends Activity implements SurfaceHolder.Callback 
         InitListener();
 
         surfaceHolder = binding.surfaceView.getHolder();
+
         surfaceHolder.addCallback(this);
 
     }

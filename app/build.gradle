@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "com.henryxzw.videodemo"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -17,7 +17,7 @@ android {
         }
         sourceSets.main {
             jniLibs.srcDir 'src/main/jniLibs'
-            jni.srcDirs = []//不编译jni
+
         }
     }
     buildTypes {

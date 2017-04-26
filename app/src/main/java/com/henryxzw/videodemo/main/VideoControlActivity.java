@@ -1,11 +1,15 @@
 package com.henryxzw.videodemo.main;
 
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -15,25 +19,32 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.henryxzw.videodemo.ActivityVedioControlBinding;
+import com.henryxzw.videodemo.ActivityVideoControlBinding;
 import com.henryxzw.videodemo.R;
 import com.henryxzw.videodemo.VideoInfo;
 
 import java.io.File;
 import java.util.Locale;
 
+import videocompress.video.VideoCompressListener;
+import videocompress.video.VideoCompressor;
+
 /**
  * Created by Administrator on 2017/4/24.
  */
 
-public class VideoControlActivity extends AppCompatActivity {
+public class VideoControlActivity extends AppCompatActivity implements SurfaceHolder.Callback{
 
-    private ActivityVedioControlBinding binding;
+    private ActivityVideoControlBinding binding;
 
     private VideoInfo videoInfo;
 
@@ -55,6 +66,9 @@ public class VideoControlActivity extends AppCompatActivity {
 
     private void InitListener()
     {
+
+        binding.surfaceView.getHolder().addCallback(this);
+
         binding.includeTitle.toolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,6 +87,38 @@ public class VideoControlActivity extends AppCompatActivity {
                     binding.viewSwitcher.showNext();
                 }
 
+            }
+        });
+        binding.btnAuto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(TextUtils.isEmpty( videoInfo.getPath()))
+                {
+                    Toast.makeText(VideoControlActivity.this,"请先选择视频文件",Toast.LENGTH_LONG).show();
+                }
+                else{
+//                    final ProgressDialog progressDialog = new ProgressDialog(VideoControlActivity.this);
+//                    progressDialog.setMax(100);
+//                    progressDialog.show();
+
+                    VideoCompressor.compress(VideoControlActivity.this, videoInfo.getPath(), new VideoCompressListener() {
+                        @Override
+                        public void onSuccess(String outputFile, String filename, long duration) {
+                            Log.e("tab",""+outputFile);
+                        }
+
+                        @Override
+                        public void onFail(String reason) {
+                            Log.e("tab",""+reason);
+                        }
+
+                        @Override
+                        public void onProgress(int progress) {
+                            Log.e("tab",""+progress);
+//                            progressDialog.setProgress(progress);
+                        }
+                    });
+                }
             }
         });
         binding.tvBack.setOnClickListener(new View.OnClickListener() {
@@ -108,8 +154,15 @@ public class VideoControlActivity extends AppCompatActivity {
     private void InitVideoData()
     {
 
-        binding.tvVideoOriginSize.setText(new String().format(Locale.CHINA,"(原始文件：.2fMB)",videoInfo.getSize()));
-        binding.tvVideoSize.setText(new String().format(Locale.CHINA,".2fMB",videoInfo.getSize()));
+        binding.tvVideoOriginSize.setText(new String().format(Locale.CHINA,"(原始文件：%.2fMB)",videoInfo.getSize()));
+        binding.tvVideoSize.setText(new String().format(Locale.CHINA,"%.2fMB",videoInfo.getSize()));
+
+        binding.linearStatus.setVisibility(View.GONE);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) binding.surfaceView.getLayoutParams();
+
+        lp.width = videoInfo.getPreview().getWidth();
+        lp.height =videoInfo.getPreview().getHeight();
+        binding.surfaceView.setLayoutParams(lp);
 
     }
 
@@ -140,8 +193,8 @@ public class VideoControlActivity extends AppCompatActivity {
 
     /**
      * method
-     * @param context
-     * @param uri
+     * @param
+     * @param
      * @return
      */
 
@@ -255,4 +308,42 @@ public class VideoControlActivity extends AppCompatActivity {
     }
 
 
+    public void Play()
+    {
+        try {
+
+
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setDisplay(binding.surfaceView.getHolder());
+            mediaPlayer.setDataSource(this, Uri.parse( videoInfo.getPath()));
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                }
+            });
+            mediaPlayer.prepare();
+        }catch (Exception ex)
+        {
+            Log.e("controlactivity",ex.getMessage());
+        }
+    }
+
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+
+        //Play();
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
 }
