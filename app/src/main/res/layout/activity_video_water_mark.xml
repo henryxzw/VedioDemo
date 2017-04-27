@@ -4,7 +4,8 @@
     <data class=".ActivityVideoWaterMarkBinding"></data>
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -16,10 +17,38 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
-                <SurfaceView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                android:layout_weight="1"
+                android:gravity="center">
+               <RelativeLayout
+                   android:id="@+id/relative_bg"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent">
+                   <ImageView
+                       android:id="@+id/iv_base"
+                       android:layout_width="100dp"
+                       android:layout_height="100dp"
+                       android:layout_centerInParent="true"
+                       android:scaleType="fitXY"
+                       android:src="@android:color/black"/>
+                   <ImageView
+                       android:id="@+id/iv_temp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content" />
+                   <TextView
+                       android:id="@+id/tv_word_temp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:textColor="@android:color/white"/>
+                   <TextView
+                       android:id="@+id/tv_choose"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:padding="10dp"
+                       android:layout_alignParentRight="true"
+                       android:text="选择文件"
+                       android:textColor="@android:color/holo_blue_light"/>
+
+               </RelativeLayout>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,6 +102,265 @@
                     android:drawableLeft="@mipmap/icon_bingo"
                     android:drawablePadding="10dp"
                     android:text="视频生成"/>
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linear_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@android:color/black"
+            android:paddingTop="50dp"
+            android:orientation="vertical"
+            android:visibility="invisible">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="10dp"
+                android:gravity="center_vertical"
+                >
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="尺寸"
+                    android:gravity="left"
+                    android:textColor="@color/color_text_light_gravy"/>
+                <SeekBar
+                    android:id="@+id/seekBar_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:progressDrawable="@drawable/seekbar_view"
+                    android:thumb="@drawable/seekbar_circle_view"
+                    android:max="100"
+                    android:progress="100"
+                    android:maxHeight="2dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:gravity="center_vertical"
+                    >
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:text="位置"
+                        android:gravity="left"
+                        android:textColor="@color/color_text_light_gravy"/>
+                    <RadioGroup
+                        android:id="@+id/rg_place"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        >
+                        <RadioButton
+                            android:id="@+id/rb1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="左上"
+                            android:textColor="@android:color/white"/>
+                        <RadioButton
+                            android:id="@+id/rb2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="左下"
+                            android:textColor="@android:color/white"/>
+                        <RadioButton
+                            android:id="@+id/rb3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="右上"
+                            android:textColor="@android:color/white"/>
+                        <RadioButton
+                            android:id="@+id/rb4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="右下"
+                            android:textColor="@android:color/white"/>
+                    </RadioGroup>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="10dp"
+
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_gray_bg_view"
+                    android:text="取消"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/btn_set"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/btn_base_bg_view"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="设置"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_bottom_word"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@android:color/black"
+            android:paddingTop="50dp"
+            android:orientation="vertical"
+            android:visibility="invisible">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <EditText
+                    android:id="@+id/edt_word"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@android:color/white"
+                    android:hint="请输入水印文字"
+                    android:textColorHint="@color/color_text_gravy"
+                    android:paddingLeft="10dp"
+                    android:textSize="13sp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="10dp"
+                    android:gravity="center_vertical"
+                    >
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:text="size"
+                        android:gravity="left"
+                        android:textColor="@color/color_text_light_gravy"/>
+                    <SeekBar
+                        android:id="@+id/seekBar_text_size"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:progressDrawable="@drawable/seekbar_view"
+                        android:thumb="@drawable/seekbar_circle_view"
+                        android:max="10"
+                        android:progress="5"
+                        android:maxHeight="2dp"
+                        android:layout_weight="1"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:gravity="center_vertical"
+                    >
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:text="位置"
+                        android:gravity="left"
+                        android:textColor="@color/color_text_light_gravy"/>
+                    <RadioGroup
+                        android:id="@+id/rg_place_w"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <RadioButton
+                            android:id="@+id/rb1_w"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="左上"
+                            android:textColor="@android:color/white"/>
+                        <RadioButton
+                            android:id="@+id/rb2_w"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="左下"
+                            android:textColor="@android:color/white"/>
+                        <RadioButton
+                            android:id="@+id/rb3_w"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="右上"
+                            android:textColor="@android:color/white"/>
+                        <RadioButton
+                            android:id="@+id/rb4_w"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="右下"
+                            android:textColor="@android:color/white"/>
+                    </RadioGroup>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_cancel_word"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="10dp"
+
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_gray_bg_view"
+                    android:text="取消"
+                    android:textColor="@android:color/white" />
+
+                <Button
+                    android:id="@+id/btn_set_word"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/btn_base_bg_view"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:text="设置"/>
             </LinearLayout>
 
         </LinearLayout>

@@ -11,6 +11,7 @@
             android:id="@+id/include_title"
             layout="@layout/title_bar"></include>
         <RelativeLayout
+            android:id="@+id/relative_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -20,26 +21,14 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"/>
 
-            <LinearLayout
-                android:id="@+id/linear_status"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_choose"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="现在还没有选择视频文件"
-                    android:textColor="@android:color/white"/>
-                <TextView
-                    android:id="@+id/tv_choose"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="点击选择"
-                    android:textColor="@android:color/holo_blue_light"/>
-            </LinearLayout>
+                android:padding="10dp"
+                android:layout_alignParentRight="true"
+                android:text="选择文件"
+                android:textColor="@android:color/holo_blue_light"/>
 
         </RelativeLayout>
 
@@ -146,7 +135,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center">
+                    android:gravity="center"
+                        android:id="@+id/linear_share">
                     <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

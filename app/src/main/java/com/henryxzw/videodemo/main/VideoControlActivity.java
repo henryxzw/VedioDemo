@@ -19,7 +19,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,8 +32,16 @@ import com.henryxzw.videodemo.R;
 import com.henryxzw.videodemo.VideoInfo;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import videocompress.util.Worker;
 import videocompress.video.VideoCompressListener;
 import videocompress.video.VideoCompressor;
 
@@ -47,6 +54,15 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
     private ActivityVideoControlBinding binding;
 
     private VideoInfo videoInfo;
+    private String originPath ="";
+    private int duration=0;
+
+    private final String parentPath = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"tencent"+File.separator+"MicroMsg"+File.separator;
+    private  String fileTemp="";
+    private ArrayList<String> files,imgs;
+
+    private Timer timer;
+    private TimerTask timerTask;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,9 +75,12 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
         InitListener();
     }
 
+
     private void InitData()
     {
         videoInfo = new VideoInfo();
+        files = new ArrayList<>();
+        imgs = new ArrayList<>();
     }
 
     private void InitListener()
@@ -97,14 +116,47 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                     Toast.makeText(VideoControlActivity.this,"请先选择视频文件",Toast.LENGTH_LONG).show();
                 }
                 else{
-//                    final ProgressDialog progressDialog = new ProgressDialog(VideoControlActivity.this);
-//                    progressDialog.setMax(100);
-//                    progressDialog.show();
+                    ReleaseMedia();
+                    final ProgressDialog progressDialog = new ProgressDialog(VideoControlActivity.this);
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setMessage("压缩中...");
+                    progressDialog.setCancelable(true);
+                    progressDialog.setMax(100);
+                    progressDialog.show();
+
+                    String min = "32";
+                    File file = new File(videoInfo.getPath());
+                    float videoSize = file.length()*1.0f/1024/1024;
+                    if(videoSize<1)
+                    {
+                        videoSize = videoSize*0.9f;
+                    }
+                    else
+                    {
+                        videoSize = 0.99f;
+                    }
+                    if(duration<120)
+                    {
+                        min = ""+(int)( videoSize*1024*8/duration-32);
+                    }
+                    else
+                    {
+                        min = "32";
+                    }
 
                     VideoCompressor.compress(VideoControlActivity.this, videoInfo.getPath(), new VideoCompressListener() {
                         @Override
-                        public void onSuccess(String outputFile, String filename, long duration) {
-                            Log.e("tab",""+outputFile);
+                        public void onSuccess(final String outputFile, String filename, long duration) {
+                            Worker.postMain(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(VideoControlActivity.this,"压缩成功",Toast.LENGTH_LONG).show();
+                                    videoInfo.setPath(outputFile);
+                                    InitVideoData();
+                                }
+                            });
+
                         }
 
                         @Override
@@ -113,11 +165,18 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                         }
 
                         @Override
-                        public void onProgress(int progress) {
-                            Log.e("tab",""+progress);
-//                            progressDialog.setProgress(progress);
+                        public void onProgress(final int progress) {
+
+                            Worker.postMain(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog.setMessage("压缩中..."+progress+"%");
+
+                                }
+                            });
+
                         }
-                    });
+                    },new String().format(Locale.CHINA," -strict -2 -vcodec libx264 -vb %sK -ab 32K ",min));
                 }
             }
         });
@@ -134,7 +193,183 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                 chooseVideo();
             }
         });
+
+        binding.linearShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(timer==null)
+                {
+                    timer = new Timer();
+                    timerTask = new TimerTask() {
+                        @Override
+                        public void run() {
+                            ArrayList<String> fileList = GetFileList();
+                            ArrayList<String> imgsList = GetImgsList();
+
+                            if(files.size() ==0)
+                            {
+                                files.addAll(fileList);
+                            }
+                            else if(files.size()<fileList.size())
+                            {
+                                for(int i=0;i<fileList.size();i++)
+                                {
+                                    if(!files.contains(fileList.get(i)))
+                                    {
+                                        Log.e("tg",fileList.get(i));
+                                        File file = new File(fileTemp+File.separator+fileList.get(i));
+                                        copyFile(videoInfo.getPath(),file.getAbsolutePath());
+                                        files.clear();
+                                        Worker.postMain(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(VideoControlActivity.this,"替换成功",Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                        break;
+
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                files.clear();
+                                files.addAll( fileList);
+                            }
+
+                            if(imgs.size() ==0)
+                            {
+                                imgs.addAll(imgsList);
+                            }
+                            else if(imgs.size()<imgsList.size())
+                            {
+                                for(int i=0;i<imgsList.size();i++)
+                                {
+                                    if(!imgs.contains(imgsList.get(i)))
+                                    {
+                                        Log.e("tg",imgsList.get(i));
+                                        try
+                                        {
+                                            FileOutputStream fo = new FileOutputStream(new File(fileTemp+File.separator+imgsList.get(i)));
+                                            videoInfo.getPreview().compress(Bitmap.CompressFormat.JPEG,100,fo);
+//                                            bitmap.recycle();
+                                            fo.close();
+                                            imgs.clear();
+                                        }catch (Exception ex)
+                                        {}
+
+                                        break;
+
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                imgs.clear();
+                                imgs.addAll( imgsList);
+                            }
+
+                        }
+                    };
+                    timer.schedule(timerTask,0,1000);
+                }
+                else
+                {
+                    timerTask.cancel();
+                    timer.cancel();
+                    timer = null;
+                    timerTask = null;
+                }
+
+            }
+        });
     }
+
+
+    /**
+     * 复制单个文件
+     * @param oldPath String 原文件路径 如：c:/fqf.txt
+     * @param newPath String 复制后路径 如：f:/fqf.txt
+     * @return boolean
+     */
+    public void copyFile(String oldPath, String newPath) {
+        try {
+            int bytesum = 0;
+            int byteread = 0;
+            File oldfile = new File(oldPath);
+            if (oldfile.exists()) { //文件存在时
+                InputStream inStream = new FileInputStream(oldPath); //读入原文件
+                FileOutputStream fs = new FileOutputStream(newPath);
+                byte[] buffer = new byte[1444];
+                int length;
+                while ( (byteread = inStream.read(buffer)) != -1) {
+                    bytesum += byteread; //字节数 文件大小
+                    System.out.println(bytesum);
+                    fs.write(buffer, 0, byteread);
+                }
+                inStream.close();
+            }
+        }
+        catch (Exception e) {
+            System.out.println("复制单个文件操作出错");
+            e.printStackTrace();
+
+        }
+
+    }
+
+    public ArrayList<String> GetFileList()
+    {
+        if(TextUtils.isEmpty(fileTemp)) {
+            File file = new File(parentPath);
+            String[] names = file.list();
+            for (int i = 0; i < names.length; i++) {
+                if (names[i].length() == 32) {
+                    fileTemp = parentPath + File.separator + names[i] + File.separator + "video";
+                    break;
+                }
+            }
+        }
+        File file1 = new File(fileTemp);
+        String[] fs = file1.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                if(name.lastIndexOf("mp4")>0)
+                {
+                    return true;
+                }
+                return false;
+            }
+        });
+        ArrayList<String> fileList = new ArrayList<>();
+        for(int i=0;i<fs.length;i++)
+        {
+            fileList.add(fs[i]);
+        }
+        return fileList;
+    }
+
+    public ArrayList<String> GetImgsList()
+    {
+        File file1 = new File(fileTemp);
+        String[] fsImgs = file1.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                if(name.lastIndexOf("jpg")>0)
+                {
+                    return true;
+                }
+                return false;
+            }
+        });
+        ArrayList<String> fileList = new ArrayList<>();
+        for(int i=0;i<fsImgs.length;i++)
+        {
+            fileList.add(fsImgs[i]);
+        }
+        return fileList;
+    }
+
 
     private void chooseVideo() {
         Intent intent = new Intent();
@@ -149,21 +384,81 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
         intent.setAction(Intent.ACTION_GET_CONTENT);
         /* 取得相片后返回本画面 */
         startActivityForResult(intent, 1);
+        ReleaseMedia();
+
+
+    }
+    public void ReleaseMedia()
+    {
+        if(mediaPlayer!=null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+            }
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     private void InitVideoData()
     {
 
-        binding.tvVideoOriginSize.setText(new String().format(Locale.CHINA,"(原始文件：%.2fMB)",videoInfo.getSize()));
-        binding.tvVideoSize.setText(new String().format(Locale.CHINA,"%.2fMB",videoInfo.getSize()));
+        File file = new File(videoInfo.getPath());
+        float videoSize = file.length()*1.0f/1024/1024;
+        binding.tvVideoSize.setText(new String().format(Locale.CHINA,"%.2fMB",videoSize));
 
-        binding.linearStatus.setVisibility(View.GONE);
+        int width = binding.relativeBg.getWidth() ;
+        int height =binding.relativeBg.getHeight();
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) binding.surfaceView.getLayoutParams();
 
-        lp.width = videoInfo.getPreview().getWidth();
-        lp.height =videoInfo.getPreview().getHeight();
+
+        float m = videoInfo.getPreview().getWidth()*1.0f/videoInfo.getPreview().getHeight()*1.0f;
+        if(width/m<=height )
+        {
+            lp.width = width;
+            lp.height = (int)(width/m);
+        }
+        else if(height*m<=width)
+        {
+            lp.width = (int)(height*m);
+            lp.height = height;
+        }
+        else {
+            float x1 = width / videoInfo.getPreview().getWidth();
+            float x2 = height / videoInfo.getPreview().getHeight();
+
+            lp.width = (int) (videoInfo.getPreview().getWidth() * (x1 > x2 ? x2 : x1));
+            lp.height = (int) (videoInfo.getPreview().getHeight() * (x1 > x2 ? x2 : x1));
+        }
         binding.surfaceView.setLayoutParams(lp);
 
+        Play();
+
+    }
+
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(mediaPlayer!=null)
+        {
+            if(mediaPlayer.isPlaying())
+            {
+                mediaPlayer.stop();
+            }
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        if(timer!=null)
+        {
+            timerTask.cancel();
+            timer.cancel();
+            timerTask = null;
+            timer= null;
+        }
     }
 
     @Override
@@ -183,6 +478,8 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                 videoInfo.setPath(v_path);
                 videoInfo.setSize(videoSize);
                 videoInfo.setPreview(bitmap);
+                originPath = v_path;
+                binding.tvVideoOriginSize.setText(new String().format(Locale.CHINA,"(原始文件：%.2fMB)",videoInfo.getSize()));
 
                 InitVideoData();
 
@@ -204,6 +501,7 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
         try {
             retriever.setDataSource(filePath);
             bitmap = retriever.getFrameAtTime();
+            duration = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION))/1000;
         }
         catch(IllegalArgumentException e) {
             e.printStackTrace();
@@ -308,18 +606,21 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
     }
 
 
+    private MediaPlayer mediaPlayer;
     public void Play()
     {
         try {
 
-
-            MediaPlayer mediaPlayer = new MediaPlayer();
+            if(mediaPlayer==null) {
+                mediaPlayer = new MediaPlayer();
+            }
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setDisplay(binding.surfaceView.getHolder());
+
             mediaPlayer.setDataSource(this, Uri.parse( videoInfo.getPath()));
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
+                    mediaPlayer.setDisplay(binding.surfaceView.getHolder());
                     mp.start();
                 }
             });
@@ -334,7 +635,6 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
-        //Play();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package videocompress.video;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.netcompss.ffmpeg4android.CommandValidationException;
@@ -23,7 +24,7 @@ import videocompress.util.VideoUtil;
 public class VideoCompressor {
     private Context mContext;
 //    private static String mStrCmd = " -strict -2 -vcodec libx264 -preset ultrafast -acodec aac -ar 44100 -ac 1 -b:a 32k -s 480x240 -aspect 2:1 -r 24 ";
-    private static String mStrCmd = " -strict -2 -vcodec libx264 -fs 900000 ";
+    private static String mStrCmd = " -strict -2 -vcodec libx264 -vb 32K -ab 32K ";
     private static String mStrCmdPre = "ffmpeg -y -i ";
     private static String mOutputFile = AppUtil.getAppDir() + "/video_compress.mp4";
 
@@ -57,12 +58,18 @@ public class VideoCompressor {
      * @param inputFile
      * @param listener
      */
-    public static void compress(final Context context, final String inputFile, final VideoCompressListener listener){
+    public static void compress(final Context context, final String inputFile, final VideoCompressListener listener, final String cmd){
         init(context);
         new Thread() {
             public void run() {
                 try {
-                    compressByFFmpeg(context, inputFile,listener);
+                    if(TextUtils.isEmpty(cmd)) {
+                        compressByFFmpeg(context, inputFile, listener);
+                    }
+                    else
+                    {
+                       compressByFFmpegNew(context,inputFile,listener,cmd);
+                    }
                 } catch(Exception e) {
                     SGLog.e("compress exception:"+e.getMessage());
                 }
@@ -139,8 +146,6 @@ public class VideoCompressor {
         vk = new LoadJNI();
         String newFilename = null;
         try {
-//            String filename = inputFile.substring(inputFile.lastIndexOf("/")+1,inputFile.lastIndexOf("."));
-//            newFilename = filename + "_ld.mp4";
             newFilename = VideoUtil.getFileMD5(new File(inputFile)) + ".mp4";
             mOutputFile = AppUtil.getAppDir() +"/" + newFilename;
             String cmdStr = mStrCmdPre + inputFile + mStrCmd + mOutputFile;
@@ -172,6 +177,44 @@ public class VideoCompressor {
             listener.onSuccess(mOutputFile,newFilename, getVideoDuration(inputFile));
         }
     }
+
+    private static void compressByFFmpegNew(Context context,String inputFile,final VideoCompressListener listener,String cmd) {
+        SGLog.e("runTranscodingUsingLoader started...");
+        vk = new LoadJNI();
+        String newFilename = null;
+        try {
+            newFilename = VideoUtil.getFileMD5(new File(inputFile)) + ".mp4";
+            mOutputFile = AppUtil.getAppDir() +"/" + newFilename;
+            String cmdStr = mStrCmdPre + inputFile + cmd + mOutputFile;
+            vk.run(GeneralUtils.utilConvertToComplex(cmdStr), workFolder, context.getApplicationContext());
+
+            Log.i(Prefs.TAG, "vk.run finished.");
+            // copying vk.log (internal native log) to the videokit folder
+            GeneralUtils.copyFileToFolder(vkLogPath, demoVideoFolder);
+        } catch (CommandValidationException e) {
+            SGLog.e("vk run exeption."+ e);
+            commandValidationFailedFlag = true;
+        } catch (Throwable e) {
+            SGLog.e("vk run exeption."+e);
+        }
+        // finished Toast
+        String rc = null;
+        if (commandValidationFailedFlag) {
+            rc = "Command Vaidation Failed";
+        }
+        else {
+            rc = GeneralUtils.getReturnCodeFromLog(vkLogPath);
+        }
+        final String status = rc;
+        SGLog.e("compress rc="+rc);
+        if (status.equals("Transcoding Status: Failed")) {
+            String strFailInfo = "Check: " + vkLogPath + " for more information.";
+            listener.onFail(strFailInfo);
+        }else{
+            listener.onSuccess(mOutputFile,newFilename, getVideoDuration(inputFile));
+        }
+    }
+
     private static int getVideoDuration(String path){
         if(mVideoDuration <= 0){
             mVideoDuration = VideoUtil.getVideoDuration(path);

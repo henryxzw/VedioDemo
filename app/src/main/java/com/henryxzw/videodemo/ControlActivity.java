@@ -13,8 +13,6 @@ import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.yixia.videoeditor.adapter.UtilityAdapter;
-import com.yixia.weibo.sdk.FFMpegUtils;
-import com.yixia.weibo.sdk.VCamera;
 
 import java.io.File;
 
