@@ -1,9 +1,12 @@
 package com.henryxzw.videodemo.main;
 
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -25,6 +28,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.henryxzw.videodemo.ActivityVideoControlBinding;
@@ -37,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -55,7 +60,7 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
 
     private VideoInfo videoInfo;
     private String originPath ="";
-    private int duration=0;
+    private float duration=0;
 
     private final String parentPath = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"tencent"+File.separator+"MicroMsg"+File.separator;
     private  String fileTemp="";
@@ -75,6 +80,16 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
         InitListener();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+       ReleaseMedia();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     private void InitData()
     {
@@ -124,7 +139,7 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                     progressDialog.setMax(100);
                     progressDialog.show();
 
-                    String min = "32";
+                    String min = "32",ac="32";
                     File file = new File(videoInfo.getPath());
                     float videoSize = file.length()*1.0f/1024/1024;
                     if(videoSize<1)
@@ -133,7 +148,7 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                     }
                     else
                     {
-                        videoSize = 0.99f;
+                        videoSize = 0.9f;
                     }
                     if(duration<120)
                     {
@@ -141,7 +156,8 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                     }
                     else
                     {
-                        min = "32";
+                        min = ""+(int)( videoSize*1024*8/duration-20);
+                        ac = "20";
                     }
 
                     VideoCompressor.compress(VideoControlActivity.this, videoInfo.getPath(), new VideoCompressListener() {
@@ -176,7 +192,7 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                             });
 
                         }
-                    },new String().format(Locale.CHINA," -strict -2 -vcodec libx264 -vb %sK -ab 32K ",min));
+                    },new String().format(Locale.CHINA," -strict -2 -vcodec libx264 -vb %sK -ab %sK ",min,ac));
                 }
             }
         });
@@ -194,11 +210,37 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
             }
         });
 
+
+        binding.linearSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(TextUtils.isEmpty( videoInfo.getPath()))
+                {
+                    Toast.makeText(VideoControlActivity.this,"请先选择视频文件",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/vd/");
+                if(!file.exists())
+                {
+                    file.mkdirs();
+                }
+                copyFile(videoInfo.getPath(),Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCMI/vd/"+videoInfo.getName());
+                Toast.makeText(VideoControlActivity.this,"保存成功",Toast.LENGTH_LONG).show();
+            }
+        });
         binding.linearShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(TextUtils.isEmpty( videoInfo.getPath()))
+                {
+                    Toast.makeText(VideoControlActivity.this,"请先选择视频文件",Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
                 if(timer==null)
                 {
+                    binding.tvWechat.setText("点击关闭监听");
                     timer = new Timer();
                     timerTask = new TimerTask() {
                         @Override
@@ -253,6 +295,7 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                                             FileOutputStream fo = new FileOutputStream(new File(fileTemp+File.separator+imgsList.get(i)));
                                             videoInfo.getPreview().compress(Bitmap.CompressFormat.JPEG,100,fo);
 //                                            bitmap.recycle();
+                                            fo.flush();
                                             fo.close();
                                             imgs.clear();
                                         }catch (Exception ex)
@@ -272,6 +315,19 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                         }
                     };
                     timer.schedule(timerTask,0,1000);
+                    if(isWeixinAvilible(VideoControlActivity.this)) {
+                        Intent intent = new Intent();
+                        ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
+                        intent.setAction(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setComponent(cmp);
+                        startActivity(intent);
+                    }
+                    else
+                    {
+                        Toast.makeText(VideoControlActivity.this,"软件无法检测微信，如已经安装，请手动打开",Toast.LENGTH_LONG).show();
+                    }
                 }
                 else
                 {
@@ -279,10 +335,26 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
                     timer.cancel();
                     timer = null;
                     timerTask = null;
+                    binding.tvWechat.setText("转朋友圈小视频");
                 }
+
 
             }
         });
+    }
+
+    public static boolean isWeixinAvilible(Context context) {
+        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++) {
+                String pn = pinfo.get(i).packageName;
+                if (pn.equals("com.tencent.mm")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -401,7 +473,6 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
 
     private void InitVideoData()
     {
-
         File file = new File(videoInfo.getPath());
         float videoSize = file.length()*1.0f/1024/1024;
         binding.tvVideoSize.setText(new String().format(Locale.CHINA,"%.2fMB",videoSize));
@@ -501,7 +572,7 @@ public class VideoControlActivity extends AppCompatActivity implements SurfaceHo
         try {
             retriever.setDataSource(filePath);
             bitmap = retriever.getFrameAtTime();
-            duration = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION))/1000;
+            duration = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION))/1000.f;
         }
         catch(IllegalArgumentException e) {
             e.printStackTrace();

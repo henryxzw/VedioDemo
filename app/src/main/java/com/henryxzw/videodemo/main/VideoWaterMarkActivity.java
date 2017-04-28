@@ -60,8 +60,9 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
     private ActivityVideoWaterMarkBinding binding;
 
     private VideoInfo videoInfo;
-    private String wm_img="",pic_place="0:0";
-    private int originW=0,originH=0;
+    private String wm_img="";
+    private int originW=0,originH=0,place_int=0;
+    private String[] places = new String[]{"20:20","20:main_h-overlay_h","main_w-overlay_w:20","main_w-overlay_w:main_h-overlay_h"};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,12 +103,17 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
         binding.btnPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(binding.linearBottomWord.getVisibility()==View.VISIBLE)
+                {
+                    return;
+                }
                 if(TextUtils.isEmpty( videoInfo.getPath()))
                 {
                     Toast.makeText(VideoWaterMarkActivity.this,"请先选择视频文件",Toast.LENGTH_LONG).show();
                 }
                 else
                 {
+                    binding.tvWordTemp.setText("");
                     chooseImg();
                 }
 
@@ -116,12 +122,17 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
         binding.btnWord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(binding.linearBottom.getVisibility()==View.VISIBLE)
+                {
+                    return;
+                }
                 if(TextUtils.isEmpty( videoInfo.getPath()))
                 {
                     Toast.makeText(VideoWaterMarkActivity.this,"请先选择视频文件",Toast.LENGTH_LONG).show();
                 }
                 else
                 {
+                    binding.ivTemp.setImageBitmap(null);
                     ShowOrHideWord(true);
                 }
             }
@@ -138,15 +149,27 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 binding.tvWordTemp.setDrawingCacheEnabled(true);
-                binding.tvWordTemp.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-                binding.tvWordTemp.layout(0, 0,  binding.tvWordTemp.getMeasuredWidth(),  binding.tvWordTemp.getMeasuredHeight());
                 Bitmap bitmap =  binding.tvWordTemp.getDrawingCache();
+                float m = binding.tvWordTemp.getWidth()*1.0f/(binding.ivBase.getWidth()+50);
+                float k = binding.tvWordTemp.getHeight()*1.0f/(binding.ivBase.getHeight()+50);
+                float w = videoInfo.getPreview().getWidth()*m;
+                float h = videoInfo.getPreview().getHeight()*k;
+                Matrix matrix = new Matrix();
+
+                matrix.postScale(w/bitmap.getWidth(),h/bitmap.getHeight());
+                if(w<h)
+                {
+                    matrix.postRotate(-90);
+                }
+                Bitmap newBitmap = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+
                 try {
-                    FileOutputStream fos = new FileOutputStream(AppUtil.getAppDir() + "/temp.jpg");
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100,fos );
+                    FileOutputStream fos = new FileOutputStream(AppUtil.getAppDir() + "/temp.png");
+                    newBitmap.compress(Bitmap.CompressFormat.PNG, 100,fos );
                     fos.flush();
                     fos.close();
                     bitmap.recycle();
+                    newBitmap.recycle();
                     binding.tvWordTemp.destroyDrawingCache();
                     Toast.makeText(VideoWaterMarkActivity.this,"图片生成成功，可以生成加水印视频",Toast.LENGTH_LONG).show();
 
@@ -161,6 +184,7 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                InitPlaceInt();
                 final ProgressDialog progressDialog = new ProgressDialog(VideoWaterMarkActivity.this);
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progressDialog.setMessage("水印添加中...");
@@ -171,13 +195,13 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        UtilityAdapter.FFmpegRun("","ffmpeg -i "+videoInfo.getPath()+" -i "+(AppUtil.getAppDir()+File.separator+"temp.jpg")+
-                                " -filter_complex overlay="+pic_place+" -f mp4 "+AppUtil.getAppDir() + "/video_compress.mp4");
+                        UtilityAdapter.FFmpegRun("","ffmpeg -i "+videoInfo.getPath()+" -i "+(AppUtil.getAppDir() + "/temp.png")+
+                                " -filter_complex overlay="+places[place_int]+" -f mp4 "+AppUtil.getAppDir() + "/video_compress.mp4");
                         Worker.postMain(new Runnable() {
                             @Override
                             public void run() {
                                 progressDialog.dismiss();
-                                Toast.makeText(VideoWaterMarkActivity.this,"添加水印成功",Toast.LENGTH_LONG).show();
+                                Toast.makeText(VideoWaterMarkActivity.this,"添加水印成功，位置："+AppUtil.getAppDir() + "/video_compress.mp4",Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -209,12 +233,16 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
                 Bitmap bitmap = BitmapFactory.decodeFile(wm_img);
                float x = binding.seekBarSize.getProgress()*1.0f/100;
                 Matrix matrix = new Matrix();
-                matrix.setScale(x,x);
+                matrix.postScale(x,x);
+                if(videoInfo.getPreview().getWidth()<videoInfo.getPreview().getHeight())
+                {
+                    matrix.postRotate(-90);
+                }
                 Bitmap newbitmap = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
 
                 try {
-                    FileOutputStream fos = new FileOutputStream(AppUtil.getAppDir() + File.separator + "temp.jpg");
-                    newbitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    FileOutputStream fos = new FileOutputStream(AppUtil.getAppDir() + File.separator + "temp.png");
+                    newbitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                     newbitmap.recycle();
                     bitmap.recycle();
                     fos.flush();
@@ -306,25 +334,25 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
             {
                 binding.tvWordTemp.setX(binding.ivBase.getX());
                 binding.tvWordTemp.setY(binding.ivBase.getY());
-                pic_place = "0:0";
+
             }
             else  if(checkedId==R.id.rb2_w)
             {
                 binding.tvWordTemp.setX(binding.ivBase.getX());
                 binding.tvWordTemp.setY(binding.ivBase.getY()+binding.ivBase.getHeight()-binding.tvWordTemp.getHeight());
-                pic_place = "0:main_h-overlay_h-"+binding.tvWordTemp.getMeasuredHeight();
+
             }
             else if(checkedId==R.id.rb3_w)
             {
                 binding.tvWordTemp.setX(binding.ivBase.getX()+binding.ivBase.getWidth()-binding.tvWordTemp.getWidth());
                 binding.tvWordTemp.setY(binding.ivBase.getY());
-                pic_place = "main_h-overlay_h-"+binding.tvWordTemp.getMeasuredHeight()+":0";
+
             }
             else if(checkedId==R.id.rb4_w)
             {
                 binding.tvWordTemp.setX(binding.ivBase.getX()+binding.ivBase.getWidth()-binding.tvWordTemp.getWidth());
                 binding.tvWordTemp.setY(binding.ivBase.getY()+binding.ivBase.getHeight()-binding.tvWordTemp.getHeight());
-                pic_place ="main_h-overlay_h-"+binding.tvWordTemp.getMeasuredHeight()+":"+"main_h-overlay_h-"+binding.tvWordTemp.getMeasuredHeight();
+
             }
         }
     }
@@ -336,26 +364,48 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
             {
                 binding.ivTemp.setX(binding.ivBase.getX());
                 binding.ivTemp.setY(binding.ivBase.getY());
-                pic_place = "0:0";
             }
             else  if(checkedId==R.id.rb2)
             {
                 binding.ivTemp.setX(binding.ivBase.getX());
                 binding.ivTemp.setY(binding.ivBase.getY()+binding.ivBase.getHeight()-binding.ivTemp.getHeight());
-                pic_place = "0:main_h-overlay_h-"+binding.ivTemp.getMeasuredHeight();
             }
             else if(checkedId==R.id.rb3)
             {
                 binding.ivTemp.setX(binding.ivBase.getX()+binding.ivBase.getWidth()-binding.ivTemp.getWidth());
                 binding.ivTemp.setY(binding.ivBase.getY());
-                pic_place = "main_h-overlay_h-"+binding.ivTemp.getMeasuredHeight()+":0";
             }
             else if(checkedId==R.id.rb4)
             {
                 binding.ivTemp.setX(binding.ivBase.getX()+binding.ivBase.getWidth()-binding.ivTemp.getWidth());
                 binding.ivTemp.setY(binding.ivBase.getY()+binding.ivBase.getHeight()-binding.ivTemp.getHeight());
-                pic_place ="main_h-overlay_h-"+binding.ivTemp.getMeasuredHeight()+":"+"main_h-overlay_h-"+binding.ivTemp.getMeasuredHeight();
             }
+        }
+
+    }
+
+    public void InitPlaceInt()
+    {
+        if(binding.rgPlaceW.getCheckedRadioButtonId()==R.id.rb1_w || binding.rgPlaceW.getCheckedRadioButtonId()==R.id.rb1)
+        {
+            place_int =0;
+        }
+        else if(binding.rgPlaceW.getCheckedRadioButtonId()==R.id.rb2_w || binding.rgPlaceW.getCheckedRadioButtonId()==R.id.rb2)
+        {
+            place_int =2;
+        }
+        else if(binding.rgPlaceW.getCheckedRadioButtonId()==R.id.rb3_w || binding.rgPlaceW.getCheckedRadioButtonId()==R.id.rb3)
+        {
+            place_int =1;
+        }
+        else if(binding.rgPlaceW.getCheckedRadioButtonId()==R.id.rb4_w || binding.rgPlaceW.getCheckedRadioButtonId()==R.id.rb4)
+        {
+            place_int =3;
+        }
+
+        if(videoInfo.getPreview().getWidth()<videoInfo.getPreview().getHeight())
+        {
+             place_int = (4+(place_int-1))%4;
         }
     }
 
@@ -509,6 +559,10 @@ public class VideoWaterMarkActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // 选取图片的返回值
+        if(data==null)
+        {
+            return;
+        }
         if (requestCode == 1) {
             //
             if (resultCode == RESULT_OK) {

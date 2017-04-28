@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">VideoDemo</string>
+    <string name="app_name">微大圣微商伙伴</string>
 
-    <string name="static_msg_name_1">微大圣视频制作</string>
+    <string name="static_msg_name_1">微大圣微商伙伴</string>
     <string name="static_msg_name_2">自动压缩则是将文件压缩至少于1MB</string>
     <string name="static_msg_name_phone_hide">手机号码</string>
     <string name="static_msg_name_password_hide">账号密码</string>

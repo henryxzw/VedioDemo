@@ -149,6 +149,7 @@ public class VideoCompressor {
             newFilename = VideoUtil.getFileMD5(new File(inputFile)) + ".mp4";
             mOutputFile = AppUtil.getAppDir() +"/" + newFilename;
             String cmdStr = mStrCmdPre + inputFile + mStrCmd + mOutputFile;
+            SGLog.e(cmdStr);
             vk.run(GeneralUtils.utilConvertToComplex(cmdStr), workFolder, context.getApplicationContext());
 
             Log.i(Prefs.TAG, "vk.run finished.");
@@ -186,6 +187,7 @@ public class VideoCompressor {
             newFilename = VideoUtil.getFileMD5(new File(inputFile)) + ".mp4";
             mOutputFile = AppUtil.getAppDir() +"/" + newFilename;
             String cmdStr = mStrCmdPre + inputFile + cmd + mOutputFile;
+            SGLog.e(cmdStr);
             vk.run(GeneralUtils.utilConvertToComplex(cmdStr), workFolder, context.getApplicationContext());
 
             Log.i(Prefs.TAG, "vk.run finished.");
